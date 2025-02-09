@@ -7,25 +7,24 @@
     <title>Student Details</title>
     {% load static %}
     <!-- <link rel="stylesheet" href="{% static 'css/styles.css' %}"> -->
+     <style>table, th, td {
+        border: 1px solid;
+      }</style>
 </head>
 <body>
     <header>
         <h1>Student Details</h1>
     </header>
 
-    <nav>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/about/">About</a></li>
-            <li><a href="/contact/">Contact</a></li>
-        </ul>
-    </nav>
-
     <section>
         <h2>Student List</h2>
 
+        <!-- To check the data in the browser -->
+        {{data}}   
+
+
         <!-- Check if students exist -->
-        {% if students %}
+        {% if data %}
             <table>
                 <thead>
                     <tr>

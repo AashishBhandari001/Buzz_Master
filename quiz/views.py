@@ -76,4 +76,4 @@ def student_details(request):
     response =  requests.get('http://127.0.0.1:8000/admin/students/')
     data = response.json()
     print(data)
-    return render(request, 'home.html', {'data': data})
+    return render(request, 'home.html', context={'data': data})
