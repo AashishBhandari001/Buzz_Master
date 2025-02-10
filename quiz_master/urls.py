@@ -27,7 +27,7 @@ urlpatterns = [
     path('home/', views.student_details, name='student_details'),
     path('login/', views.login, name='login'),
 
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]
 
 
 
