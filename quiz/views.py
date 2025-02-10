@@ -3,7 +3,7 @@ import requests
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .models import Student, Question, QuizSettings, StudentResponse
+from .models import Student, Question, QuizSetting, StudentResponse
 from .serializers import StudentSerializer, QuestionSerializer, QuizSettingsSerializer, StudentResponseSerializer
 
 @api_view(['GET'])
@@ -26,7 +26,7 @@ def student_login(request):
                 {"message": "Login Successful"}, status=status.HTTP_200_OK
             )
         else:
-            return Response({"error": "Invalid credentials!"}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"error": "Email or Password is incorrect!"}, status=status.HTTP_401_UNAUTHORIZED)
 
     except Student.DoesNotExist:
         return Response({"error": "Student not found"}, status=status.HTTP_404_NOT_FOUND)
