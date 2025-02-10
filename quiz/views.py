@@ -81,3 +81,7 @@ def student_details(request):
     data = response.json()
     print(data)
     return render(request, 'home.html', context={'data': data})
+
+def login(request):
+    return render(request, 'login.html')
+

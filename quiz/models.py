@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser
 
 class Admin(AbstractUser):
     """Custom Admin model inheriting from Django's AbstractUser"""
-    is_superadmin = models.BooleanField(default=False)  # Extra flag for superadmins
+    is_superadmin = models.BooleanField(default=False)  
 
     def __str__(self):
         return self.username
