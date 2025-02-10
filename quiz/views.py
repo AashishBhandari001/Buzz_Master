@@ -3,8 +3,8 @@ import requests
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .models import Student, Question, QuizSetting, StudentResponse
-from .serializers import StudentSerializer, QuestionSerializer, QuizSettingsSerializer, StudentResponseSerializer
+from .models import Student, Question, QuizSetting, StudentResponse, Option, Mark
+from .serializers import StudentSerializer, QuestionSerializer, QuizSettingsSerializer, StudentResponseSerializer, StudentOptionSerializer, StudentMarkSerializer
 
 @api_view(['GET'])
 def get_student(request):
@@ -35,19 +35,23 @@ def student_login(request):
 @api_view(['GET'])
 def get_question(request):
     questions = Question.objects.all().order_by('question_id')
-    serializer = QuizSettingsSerializer(questions, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    options = Option.objects.all()
+    marks = Mark.objects.all()
+    serializer = QuestionSerializer(questions, many=True)
+    optionSerializer = StudentOptionSerializer(options, many=True)
+    markSerializer = StudentMarkSerializer(marks, many=True)
+    return Response({"questions": serializer.data, "options": optionSerializer.data, "marks": markSerializer.data}, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
 def submit_quiz(request):
 
-    student_id = request.data.get('student_id')  
+    student_email = request.data.get('student_email')  
     responses = request.data.get('responses') 
 
     try:
         # Fetch student from the database
-        student = Student.objects.get(student_id=student_id)
+        student = Student.objects.get(email=student_email)
 
         # Check if the student has already submitted the quiz
         if StudentResponse.objects.filter(student=student).exists():
