@@ -3,8 +3,8 @@ import requests
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .models import Student, Question, QuizSetting, StudentResponse, Option, Mark
-from .serializers import StudentSerializer, QuestionSerializer, QuizSettingsSerializer, StudentResponseSerializer, StudentOptionSerializer, StudentMarkSerializer
+from .models import Student, Question, QuizSetting, StudentResponse, Option, Mark, Answer, StudentResult
+from .serializers import StudentSerializer, QuestionSerializer, QuizSettingsSerializer, StudentResponseSerializer, StudentOptionSerializer, StudentMarkSerializer, StudentAnswerSerializer
 
 @api_view(['GET'])
 def get_student(request):
@@ -43,43 +43,75 @@ def get_question(request):
     return Response({"questions": serializer.data, "options": optionSerializer.data, "marks": markSerializer.data}, status=status.HTTP_200_OK)
 
 
-@api_view(['POST'])
-def submit_quiz(request):
 
-    student_email = request.data.get('student_email')  
-    responses = request.data.get('responses') 
+@api_view(['POST'])
+def submit_quiz(request, student_id):
+    questions_data = request.data.get('questions', [])  # Get list of questions
+    results = []  # Store results for multiple questions
+    grand_total_marks = 0
 
     try:
-        # Fetch student from the database
-        student = Student.objects.get(email=student_email)
+        student = Student.objects.filter(student_id=student_id).first()
 
-        # Check if the student has already submitted the quiz
-        if StudentResponse.objects.filter(student=student).exists():
-            return Response({"error": "You have already submitted the quiz!"}, status=status.HTTP_400_BAD_REQUEST)
+        for question in questions_data:
+            question_title = question.get('title')
+            question_options = question.get('options', {})
 
-        # Save the student response
-        student_response = StudentResponse.objects.create(
+            total_marks = 0
+            counted_questions = set()  # Track unique question IDs
+            answer_dict = {}
+
+            # Fetch question details
+            question_code = Question.objects.filter(title=question_title).first()
+            if not question_code:
+                continue  # Skip if question doesn't exist
+
+            question_answers = Answer.objects.filter(question=question_code)
+            serializer = StudentAnswerSerializer(question_answers, many=True)
+
+            # Store correct answers in dictionary
+            for answer in serializer.data:
+                answer_text = answer["answer"]
+                answer_dict[answer_text] = question_code.question_id
+
+
+            question_id = question_code.question_id
+
+            if question_options == answer_dict:
+                mark = Mark.objects.filter(question=question_id).first()
+                if mark and question_id not in counted_questions:
+                    total_marks += mark.mark 
+                    counted_questions.add(question_id)
+
+
+            results.append({
+                "title": question_title,
+                "total_questions": len(answer_dict),
+                "total_marks": total_marks
+            })
+
+            grand_total_marks += total_marks
+
+        # Save Student Result in Database
+        student_result = StudentResult.objects.create(
             student=student,
-            responses=responses
+            total_marks=grand_total_marks
         )
+        student_result.save()
 
-        return Response(
-            {"message": "Quiz submitted successfully!", "submission_id": student_response.studentResponse_id},
-            status=status.HTTP_201_CREATED
-        )
 
-    except Student.DoesNotExist:
-        return Response({"error": "Student not found!"}, status=status.HTTP_404_NOT_FOUND)
+        # return Response({"results": results, "grand_total_marks": grand_total_marks, "student_result_id": student_result.result_id}, status=status.HTTP_200_OK)
+        return Response({"message": "Quiz Successfully submitted!"}, status=status.HTTP_200_OK)
 
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
+
 def student_details(request):
     response =  requests.get('http://127.0.0.1:8000/admin/students/')
     data = response.json()
-    print(data)
     return render(request, 'home.html', context={'data': data})
 
 def login(request):
