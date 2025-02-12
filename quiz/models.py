@@ -14,6 +14,9 @@ class Student(models.Model):
     email = models.EmailField(default="")
     password = models.CharField(max_length=128)
 
+    def __str__(self):
+        return self.full_name
+
 
 class Catogery(models.Model):
     catogery_id = models.BigAutoField(primary_key=True)
@@ -29,7 +32,7 @@ class Question(models.Model):
     question = models.TextField(default="New Quiz")
 
     def __str__(self):
-        return self.title
+        return self.question
 
 class Option(models.Model):
     option = models.CharField(max_length=255)
