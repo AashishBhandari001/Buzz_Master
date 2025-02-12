@@ -16,8 +16,6 @@ def get_student(request):
 def student_login(request):
     email = request.data.get('email')
     password = request.data.get('password')
-
-
     try:
         student  = Student.objects.get(email=email)
 
@@ -30,7 +28,8 @@ def student_login(request):
 
     except Student.DoesNotExist:
         return Response({"error": "Student not found"}, status=status.HTTP_404_NOT_FOUND)
-
+    
+    
 
 @api_view(['GET'])
 def get_question(request):
@@ -115,5 +114,24 @@ def student_details(request):
     return render(request, 'home.html', context={'data': data})
 
 def login(request):
+    if request.method == "POST":
+        email = request.POST.get('email')
+        password = request.POST.get('password') 
+
+        api_url = "http://127.0.0.1:8000/admin/student/login/"
+        data = {"email": email, "password": password}
+
+        # Sending data to the API
+        response = requests.post(api_url, json=data)
+
+        # Handle API response
+
+        if response.status_code == 200:
+            print("Login Successful")
+            return render(request, 'home.html', {"message": "Login Successful"})
+        
+        else:
+            return render(request, 'login.html', {"error": response.json().get("error")})
+
     return render(request, 'login.html')
 

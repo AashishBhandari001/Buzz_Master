@@ -28,8 +28,6 @@ urlpatterns = [
 ]
 
 
-
-
 admin.site.index_title = "The Quiz Master"
 admin.site.site_header = "The Quiz Master Admin"
 admin.site.site_title = "Site Title Quiz Master"
