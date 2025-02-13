@@ -24,10 +24,11 @@ urlpatterns = [
     path('admin/', include('quiz.urls')),
     path('home/', views.student_details, name='student_details'),
     path('login/', views.login, name='login'),
+    # path('logout/', views.logout, name='logout'),
+    path('quiz/', views.submit_quiz, name='quiz'),
+    path('question/', views.question, name='question'),
 
 ]
-
-
 admin.site.index_title = "The Quiz Master"
 admin.site.site_header = "The Quiz Master Admin"
 admin.site.site_title = "Site Title Quiz Master"

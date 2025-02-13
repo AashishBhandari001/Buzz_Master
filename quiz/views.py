@@ -135,3 +135,13 @@ def login(request):
 
     return render(request, 'login.html')
 
+
+    # path('question/', views.get_question, name='question'),
+
+def question(request):
+    return render(request, 'quiz.html')
+
+        
+
+
+

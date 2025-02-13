@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Buzz Master Quiz App</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/quiz.css' %}">
+    <script>
+        // Hardcoded questions for the quiz just to test front end
+        const questions = [
+            {
+                title: "What is the capital of France?",
+                options: ["Paris", "London", "Berlin", "Madrid"],
+                correct: 0,
+            },
+            {
+                title: "What is 2 + 2?",
+                options: ["3", "4", "5", "6"],
+                correct: 1,
+            },
+            {
+                title: "Who wrote 'Hamlet'?",
+                options: ["Charles Dickens", "William Shakespeare", "J.K. Rowling", "Mark Twain"],
+                correct: 1,
+            },
+            {
+                title: "What is the largest planet in our solar system?",
+                options: ["Earth", "Mars", "Jupiter", "Saturn"],
+                correct: 2,
+            },
+        ];
+
+        let currentIndex = 0;
+
+        function renderQuestion(index) {
+            const quizContainer = document.getElementById("quiz");
+            const question = questions[index];
+
+            let html = `
+                <p class="question">${question.title}</p>
+                <div class="options">`;
+
+            question.options.forEach((option, idx) => {
+                html += `
+                    <label class="option">
+                        <input type="radio" name="option" value="${idx}"> ${option}
+                    </label>`;
+            });
+
+            html += "</div>";
+            quizContainer.innerHTML = html;
+
+            document.getElementById("prev").disabled = index === 0;
+            document.getElementById("next").disabled = index === questions.length - 1;
+        }
+
+        function prevQuestion() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderQuestion(currentIndex);
+            }
+        }
+
+        function nextQuestion() {
+            if (currentIndex < questions.length - 1) {
+                currentIndex++;
+                renderQuestion(currentIndex);
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderQuestion(currentIndex);
+        });
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Buzz Master</h1>
+            <p class="tagline">Test your knowledge with a fun quiz!</p>
+        </header>
+        <div id="quiz"></div>
+        <div id="result" class="result"></div>
+        <div class="buttons">
+            <button id="prev" class="button" onclick="prevQuestion()">Previous</button>
+            <button id="submit" class="button">Submit</button>
+            <button id="next" class="button" onclick="nextQuestion()">Next</button>
+        </div>
+    </div>
+</body>
+
+</html>
