@@ -105,6 +105,7 @@ def submit_quiz(request, student_id):
         # Save Student Result in Database
         student_result = StudentResult.objects.create(
             student=student,
+            quizTitle = question_code.quizTitle,
             total_marks=grand_total_marks
         )
         student_result.save()

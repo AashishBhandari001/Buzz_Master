@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import Admin, Student, Catogery, Question,Option, Answer, Mark , StudentResponse, QuizSetting, StudentResult
+from .models import Admin, Student, Catogery, Question,Option, Answer, Mark , StudentResponse, QuizSetting, StudentResult, QuizName
 
 class AdminUserAdmin(UserAdmin):
     list_display = ('username', 'email', 'is_superuser', 'is_superadmin')
@@ -33,7 +33,7 @@ admin.site.register(StudentResponse, AdminStudentResponse)
 
 
 class AdminStudentResult(admin.ModelAdmin):
-    list_display = ('result_id', 'student', 'total_marks')
+    list_display = ('result_id', 'student', 'quizTitle','total_marks')
     search_fields = ('result_id', 'student')
     ordering = ['result_id']
 
@@ -47,7 +47,12 @@ class AdminCategory(admin.ModelAdmin):
 
 admin.site.register(Catogery, AdminCategory)
 
+class AdminQuizName(admin.ModelAdmin):
+    list_display = ('quizName_id', 'quizName')
+    search_fields = ('quizName_id', 'quizName')
+    ordering = ['quizName_id']
 
+admin.site.register(QuizName, AdminQuizName)
 
 class AdminOptions(admin.ModelAdmin):
     list_display = ('id','option', 'question')
@@ -85,7 +90,7 @@ class MarksInlineModel(admin.TabularInline):
 
 
 class AdminQuestion(admin.ModelAdmin):
-    list_display = ('question_id', 'catogery', 'title', 'question')
+    list_display = ('question_id', 'catogery','quizTitle', 'title', 'question')
     search_fields = ('question_id', 'text')
     ordering = ['question_id']
     inlines = [OptionsInlineModel, AnswersInlineModel, MarksInlineModel]

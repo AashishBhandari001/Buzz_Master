@@ -24,10 +24,18 @@ class Catogery(models.Model):
 
     def __str__(self):
         return self.name
+    
+class QuizName(models.Model):
+    quizName_id = models.BigAutoField(primary_key=True)
+    quizName = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.quizName
 
 class Question(models.Model):
     question_id = models.BigAutoField(primary_key=True)
     catogery = models.ForeignKey(Catogery, default=1, on_delete=models.DO_NOTHING)
+    quizTitle = models.ForeignKey(QuizName, null=True, blank=True, on_delete=models.DO_NOTHING)
     title = models.CharField(max_length=255, verbose_name=("Title"))
     question = models.TextField(default="New Quiz")
 
@@ -66,4 +74,5 @@ class StudentResponse(models.Model):
 class StudentResult(models.Model):
     result_id = models.BigAutoField(primary_key=True)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    quizTitle = models.ForeignKey(QuizName, null=True, blank=True, on_delete=models.CASCADE)
     total_marks = models.IntegerField(default=0)
