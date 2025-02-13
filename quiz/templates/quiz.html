@@ -6,29 +6,10 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/quiz.css' %}">
     <script>
-        // Hardcoded questions for the quiz just to test front end
-        const questions = [
-            {
-                title: "What is the capital of France?",
-                options: ["Paris", "London", "Berlin", "Madrid"],
-                correct: 0,
-            },
-            {
-                title: "What is 2 + 2?",
-                options: ["3", "4", "5", "6"],
-                correct: 1,
-            },
-            {
-                title: "Who wrote 'Hamlet'?",
-                options: ["Charles Dickens", "William Shakespeare", "J.K. Rowling", "Mark Twain"],
-                correct: 1,
-            },
-            {
-                title: "What is the largest planet in our solar system?",
-                options: ["Earth", "Mars", "Jupiter", "Saturn"],
-                correct: 2,
-            },
-        ];
+        // Dynamically injected data from backend
+        const questions = JSON.parse('{{ questions|safe }}');
+        console.log("Questions:", questions);
+
 
         let currentIndex = 0;
 
@@ -50,6 +31,7 @@
             html += "</div>";
             quizContainer.innerHTML = html;
 
+            // Enable or disable navigation buttons
             document.getElementById("prev").disabled = index === 0;
             document.getElementById("next").disabled = index === questions.length - 1;
         }
@@ -68,6 +50,19 @@
             }
         }
 
+        function submitQuiz() {
+            const selectedOptions = [];
+            document.querySelectorAll("input[type='radio']:checked").forEach((input, index) => {
+                selectedOptions.push({ questionIndex: index, selectedOption: input.value });
+            });
+
+            console.log("Selected Options:", selectedOptions);
+
+            // Display result or send data to backend if needed
+            const resultContainer = document.getElementById("result");
+            resultContainer.innerHTML = "<p>Quiz submitted successfully!</p>";
+        }
+
         document.addEventListener("DOMContentLoaded", () => {
             renderQuestion(currentIndex);
         });
@@ -80,11 +75,13 @@
             <h1>Buzz Master</h1>
             <p class="tagline">Test your knowledge with a fun quiz!</p>
         </header>
+
         <div id="quiz"></div>
         <div id="result" class="result"></div>
+
         <div class="buttons">
             <button id="prev" class="button" onclick="prevQuestion()">Previous</button>
-            <button id="submit" class="button">Submit</button>
+            <button id="submit" class="button" onclick="submitQuiz()">Submit</button>
             <button id="next" class="button" onclick="nextQuestion()">Next</button>
         </div>
     </div>

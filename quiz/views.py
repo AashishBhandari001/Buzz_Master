@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .models import Student, Question, QuizSetting, StudentResponse, Option, Mark, Answer, StudentResult
 from .serializers import StudentSerializer, QuestionSerializer, QuizSettingsSerializer, StudentResponseSerializer, StudentOptionSerializer, StudentMarkSerializer, StudentAnswerSerializer
+from django.shortcuts import redirect
 
 @api_view(['GET'])
 def get_student(request):
@@ -20,8 +21,10 @@ def student_login(request):
         student  = Student.objects.get(email=email)
 
         if password == student.password:
+            studentID = Student.objects.filter(email=email).first()
             return Response(
-                {"message": "Login Successful"}, status=status.HTTP_200_OK
+                {"message": "Login Successful", "studentId": studentID.student_id }, status=status.HTTP_200_OK
+            
             )
         else:
             return Response({"error": "Email or Password is incorrect!"}, status=status.HTTP_401_UNAUTHORIZED)
@@ -121,7 +124,7 @@ def submit_quiz(request, student_id):
 
 
 def student_details(request):
-    response =  requests.get('http://127.0.0.1:8000/admin/students/')
+    response =  requests.get('http://127.0.0.1:8000/admin/student/question/')
     data = response.json()
     return render(request, 'home.html', context={'data': data})
 
@@ -140,7 +143,10 @@ def login(request):
 
         if response.status_code == 200:
             print("Login Successful")
-            return render(request, 'home.html', {"message": "Login Successful"})
+            # return render(request, 'home.html', {"message": "Login Successful"})
+            # //redirect
+            return redirect('/home/') 
+        
         
         else:
             return render(request, 'login.html', {"error": response.json().get("error")})
