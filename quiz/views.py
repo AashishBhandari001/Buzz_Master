@@ -60,6 +60,10 @@ def submit_quiz(request, student_id):
             counted_questions = set()  # Track unique question IDs
             answer_dict = {}
 
+            selected_list = []
+            for key, value in question_options.items():
+                selected_list.append(key)
+
             # Fetch question details
             question_code = Question.objects.filter(title=question_title).first()
             if not question_code:
@@ -90,6 +94,13 @@ def submit_quiz(request, student_id):
             })
 
             grand_total_marks += total_marks
+        
+        student_response = StudentResponse.objects.create(
+                student=student,
+                question=question_code,
+                selected_option=", ".join(selected_list)
+            )
+        student_response.save()
 
         # Save Student Result in Database
         student_result = StudentResult.objects.create(
@@ -99,8 +110,8 @@ def submit_quiz(request, student_id):
         student_result.save()
 
 
-        # return Response({"results": results, "grand_total_marks": grand_total_marks, "student_result_id": student_result.result_id}, status=status.HTTP_200_OK)
-        return Response({"message": "Quiz Successfully submitted!"}, status=status.HTTP_200_OK)
+        return Response({"results": results, "grand_total_marks": grand_total_marks, "student_result_id": student_result.result_id}, status=status.HTTP_200_OK)
+        # return Response({"message": "Quiz Successfully submitted!"}, status=status.HTTP_200_OK)
 
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

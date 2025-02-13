@@ -36,17 +36,17 @@ class Question(models.Model):
 
 class Option(models.Model):
     option = models.CharField(max_length=255)
-    question = models.ForeignKey(Question, on_delete=models.DO_NOTHING)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
     
 
 class Answer(models.Model):
     answer = models.CharField(max_length=255)
-    question = models.ForeignKey(Question, on_delete=models.DO_NOTHING)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
 
 
 class Mark(models.Model):
     mark = models.IntegerField(default=0)
-    question = models.ForeignKey(Question, on_delete=models.DO_NOTHING)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
 
 class QuizSetting(models.Model):
     quiz_id = models.BigAutoField(primary_key=True)
@@ -56,8 +56,12 @@ class QuizSetting(models.Model):
 class StudentResponse(models.Model):
     studentResponse_id = models.BigAutoField(primary_key=True)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    responses = models.ForeignKey(Question, on_delete=models.DO_NOTHING)
+    question = models.ForeignKey(Question, on_delete=models.PROTECT)
+    selected_option = models.TextField(default="")
     submission_time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.student.full_name} - {self.question.question} - {self.selected_option}"
 
 class StudentResult(models.Model):
     result_id = models.BigAutoField(primary_key=True)

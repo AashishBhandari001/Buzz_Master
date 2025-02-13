@@ -25,7 +25,7 @@ admin.site.register(QuizSetting, AdminQuizSettings)
 
 
 class AdminStudentResponse(admin.ModelAdmin):
-    list_display = ('studentResponse_id', 'student', 'responses', 'submission_time')
+    list_display = ('studentResponse_id', 'student', 'question','selected_option', 'submission_time')
     search_fields = ('studentResponse_id', 'student')
     ordering = ['studentResponse_id']
 
